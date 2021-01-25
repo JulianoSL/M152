@@ -1,3 +1,10 @@
+<?php 
+//  Auteur       :   Souza Luz Juliano
+//  Description  :   Page Post, on peut ajouter un post contenant du texte et des fichiers multimédia
+//  Date         :   Janvier 2020
+//  Version      :   1.0
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 

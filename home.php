@@ -1,3 +1,10 @@
+<?php 
+//  Auteur       :   Souza Luz Juliano
+//  Description  :   Page home, page principale du site contenant les post ajoutés depuis la page post
+//  Date         :   Janvier 2020
+//  Version      :   1.0
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
