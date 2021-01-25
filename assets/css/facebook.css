@@ -41,6 +41,7 @@ hr {
 
 .column {
     height: 100%;
+    width: 100%;
     overflow: auto;
     *zoom:1;
 }
@@ -284,4 +285,8 @@ small.text-muted {
   #sidebar, #sidebar a, #sidebar-footer a {
     padding-left:3px;
   }
+}
+#form
+{
+  
 }
