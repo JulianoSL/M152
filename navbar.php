@@ -23,7 +23,7 @@
                                     <a href="home.php"><i class="glyphicon glyphicon-home"></i> Home</a>
                                 </li>
                                 <li>
-                                    <a href="post.php" role="button" data-toggle="modal"><i class="glyphicon glyphicon-plus"></i> Post</a>
+                                    <a href="post.php" role="button"><i class="glyphicon glyphicon-plus"></i> Post</a>
                                 </li>
                                 <li>
                                     <a href="#"><span class="badge">badge</span></a>

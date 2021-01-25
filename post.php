@@ -19,7 +19,12 @@
             <div class="row row-offcanvas row-offcanvas-left">
                 <!-- main right col -->
                 <div class="column col-sm-10 col-xs-11" id="main">
-                    <?php include_once("navbar.php"); ?>                  
+                    <?php include_once("navbar.php"); ?>
+                    <form action="post.php" method="post" id="form">
+                        <p>Votre texte :<textarea name="texte"></textarea></p>
+                        <p><input type="file" name="upload" multiple accept="image/*"></p>
+                        <p><input type="submit" name="envoyer" value="envoyer"></p>
+                    </form>
                 </div>
                 <!-- /main -->
             </div>
