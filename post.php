@@ -4,6 +4,33 @@
 //  Date         :   Janvier 2020
 //  Version      :   1.0
 
+define('KB', 1024);
+define('MB', 1048576);
+define('GB', 1073741824);
+define('TB', 1099511627776);
+
+$dir = "./assets/upload";
+
+
+
+$error_msg = "";
+if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
+    $filepath = $_FILES["upload"]["tmp_name"][0];
+    $perm = fileperms($filepath) | 0644;
+    chmod($filepath, $perm);
+    $texte = filter_input(INPUT_POST, "texte", FILTER_SANITIZE_STRING);
+    foreach ($_FILES["upload"]["error"] as $key => $error) {
+        if ($_FILES['upload']['size'][0] < 3 * MB) {
+            if ($error == UPLOAD_ERR_OK) {
+                $tmp_name = $_FILES["upload"]["tmp_name"][$key];
+                $name = basename($_FILES["upload"]["name"][$key]);
+                move_uploaded_file($tmp_name, "$dir/$name");
+            }
+        } else {
+            $error_msg = "Taille de fichier trop importante !";
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,13 +54,14 @@
                 <!-- main right col -->
                 <div class="column col-sm-10 col-xs-11" id="main">
                     <?php include_once("navbar.php"); ?>
-                    <form action="post.php" method="post" id="form">
+                    <form action="post.php" method="post" id="form" enctype="multipart/form-data">
                         <textarea name="texte" placeholder="Write Something..."></textarea>
                         <div id="bottomPost">
                             <label for="input">📸</label>
                             <input type="file" name="upload[]" multiple accept="image/*" id="input">
                             <input type="submit" name="envoyer" value="envoyer" class="envoyer">
                         </div>
+                        <p id="error"><?= $error_msg; ?></p>
                     </form>
                 </div>
                 <!-- /main -->
