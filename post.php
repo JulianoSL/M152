@@ -1,4 +1,4 @@
-<?php 
+<?php
 //  Auteur       :   Souza Luz Juliano
 //  Description  :   Page Post, on peut ajouter un post contenant du texte et des fichiers multimédia
 //  Date         :   Janvier 2020
@@ -28,9 +28,12 @@
                 <div class="column col-sm-10 col-xs-11" id="main">
                     <?php include_once("navbar.php"); ?>
                     <form action="post.php" method="post" id="form">
-                        <p>Votre texte :<textarea name="texte"></textarea></p>
-                        <p><input type="file" name="upload" multiple accept="image/*"></p>
-                        <p><input type="submit" name="envoyer" value="envoyer"></p>
+                        <textarea name="texte" placeholder="Write Something..."></textarea>
+                        <div id="bottomPost">
+                            <label for="input">📸</label>
+                            <input type="file" name="upload[]" multiple accept="image/*" id="input">
+                            <input type="submit" name="envoyer" value="envoyer" class="envoyer">
+                        </div>
                     </form>
                 </div>
                 <!-- /main -->

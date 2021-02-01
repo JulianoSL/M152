@@ -286,7 +286,38 @@ small.text-muted {
     padding-left:3px;
   }
 }
+/**     */
+
 #form
 {
+  margin :auto;
   margin-top: 10%;
+  width: 100vw;
+  height: 30vh;
+  text-align: center;
+}
+#input
+{
+  display: none;
+}
+textarea
+{
+  resize: none;
+  width: 20vw;
+}
+.envoyer
+{
+  float: right;
+}
+#bottomPost
+{
+  margin :auto;
+  width: 20vw;    
+  margin-top: 1vh;
+  padding-top: 0.5vh;
+  border-top: #c0c0c0 solid 1px;
+}
+label
+{
+  float: left;
 }
