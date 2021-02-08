@@ -15,22 +15,20 @@ $dir = "./assets/upload";
 
 $error_msg = "";
 if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
-    // foreach ($_FILES["upload"]["name"] as $index => $type) {
-    //     if (!exif_imagetype($type)) {
-
-    foreach ($_FILES["upload"]["error"] as $key => $error) {
-        if ($_FILES['upload']['size'][0] < 3 * MB) {
-            if ($error == UPLOAD_ERR_OK) {
-                $tmp_name = $_FILES["upload"]["tmp_name"][$key];
-                $name = basename($_FILES["upload"]["name"][$key]);
-                move_uploaded_file($tmp_name, "$dir/$name");
+    for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
+        if (exif_imagetype($_FILES["upload"]["tmp_name"][$i])) {
+            if ($_FILES["upload"]["size"][$i] < 3 * MB) {
+                if ($_FILES["upload"]["error"][$i] == UPLOAD_ERR_OK) {
+                    $tmp_name = $_FILES["upload"]["tmp_name"][$i];
+                    $name = basename($_FILES["upload"]["name"][$i]);
+                    move_uploaded_file($tmp_name, "$dir/$name");
+                    ajouterMedia($_FILES["upload"]["type"][$i], $_FILES["upload"]["name"][$i], 1);
+                }
+            } else {
+                $error_msg = "Taille de fichier trop importante !";
             }
-        } else {
-            $error_msg = "Taille de fichier trop importante !";
         }
     }
-    //     }
-    // }
 }
 ?>
 <!DOCTYPE html>
