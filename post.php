@@ -15,10 +15,9 @@ $dir = "./assets/upload";
 
 $error_msg = "";
 if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
-    $filepath = $_FILES["upload"]["tmp_name"][0];
-    $perm = fileperms($filepath) | 0644;
-    chmod($filepath, $perm);
-    $texte = filter_input(INPUT_POST, "texte", FILTER_SANITIZE_STRING);
+    // foreach ($_FILES["upload"]["name"] as $index => $type) {
+    //     if (!exif_imagetype($type)) {
+
     foreach ($_FILES["upload"]["error"] as $key => $error) {
         if ($_FILES['upload']['size'][0] < 3 * MB) {
             if ($error == UPLOAD_ERR_OK) {
@@ -30,6 +29,8 @@ if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
             $error_msg = "Taille de fichier trop importante !";
         }
     }
+    //     }
+    // }
 }
 ?>
 <!DOCTYPE html>
