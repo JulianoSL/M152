@@ -3,6 +3,7 @@
 //  Description  :   Page Post, on peut ajouter un post contenant du texte et des fichiers multimédia
 //  Date         :   Janvier 2020
 //  Version      :   1.0
+include_once("./assets/fonctions/post.inc.php");
 
 define('KB', 1024);
 define('MB', 1048576);
@@ -16,7 +17,7 @@ $dir = "./assets/upload";
 $error_msg = "";
 if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
     for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
-        if (exif_imagetype($_FILES["upload"]["tmp_name"][$i])) {
+        if (strpos($_FILES["upload"]["type"][$i], "image") !== false && tailleDossier($_FILES["upload"]["tmp_name"]) <= 70 * MB) {
             if ($_FILES["upload"]["size"][$i] < 3 * MB) {
                 if ($_FILES["upload"]["error"][$i] == UPLOAD_ERR_OK) {
                     $tmp_name = $_FILES["upload"]["tmp_name"][$i];

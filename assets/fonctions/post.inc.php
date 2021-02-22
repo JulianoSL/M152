@@ -71,3 +71,15 @@ function ajouterMedia($type, $nomMedia, $idPost)
     }
     return $answer;
 }
+/**
+ * Retourne la taille d'un dossier passé en paramètre
+ *
+ * @param string $dossier -- le repertoire 
+ * @return int -- la taille du dossier
+ */
+function tailleDossier($dossier)
+{
+    $size = 0;
+    $d = scandir($dossier[0]);
+    return $size;
+}
