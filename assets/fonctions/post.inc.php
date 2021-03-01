@@ -38,6 +38,27 @@ function dbData()
     // Pas d'erreur, retourne un connecteur
     return $dbc;
 }
+function ajouterPost($commentaire, $modificationDate)
+{
+    static $ps = null;
+    $sql = "INSERT INTO post (commentaire,creationDate,modificationDate) VALUES (:COMMENTAIRE,CURRENT_TIMESTAMP(),:MODIF_DATE);";
+
+    $answer = false;
+    try {
+        if ($ps == null) {
+            $ps = dbData()->prepare($sql);
+        }
+        $ps->bindParam(':COMMENTAIRE', $commentaire, PDO::PARAM_STR);
+        $ps->bindParam(':MODIF_DATE', $modificationDate, PDO::PARAM_STR);
+        $ps->execute();
+
+        $answer = $ps->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        $answer = array();
+        echo $e->getMessage();
+    }
+    return $answer;
+}
 
 /**
  * ajoute un media dans la bd
@@ -52,7 +73,7 @@ function dbData()
 function ajouterMedia($type, $nomMedia, $idPost)
 {
     static $ps = null;
-    $sql = "INSERT INTO `post` ('typeMedia','nomMedia','idPost') VALUES (:TYPE_MEDIA,:NOM_MEDIA,:ID_POST);";
+    $sql = "INSERT INTO Media (typeMedia,nomMedia,idPost,creationDate) VALUES (:TYPE_MEDIA,:NOM_MEDIA,:ID_POST,CURRENT_TIMESTAMP());";
 
     $answer = false;
     try {
@@ -103,4 +124,13 @@ function getName($n)
     }
 
     return $randomString;
+}
+/**
+ * retourne le dernier id inseré dans la table post 
+ *
+ * @return void
+ */
+function getLastPostId()
+{
+    return dbData()->lastInsertId();
 }
