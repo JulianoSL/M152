@@ -71,15 +71,36 @@ function ajouterMedia($type, $nomMedia, $idPost)
     }
     return $answer;
 }
+
 /**
- * Retourne la taille d'un dossier passé en paramètre
+ * Retourne la taille de l'upload
  *
- * @param string $dossier -- le repertoire 
- * @return int -- la taille du dossier
+ * @param [int] $upload 
+ * @return int $taille -> la taille totale de l'upload
  */
-function tailleDossier($dossier)
+function tailleUpload($upload)
 {
-    $size = 0;
-    $d = scandir($dossier[0]);
-    return $size;
+    $taille = 0;
+    foreach ($upload as $key => $value) {
+        $taille += $value;
+    }
+    return $taille;
+}
+/**
+ * retourne un string aléatoire (fonction prise sur le site https://www.geeksforgeeks.org/generating-random-string-using-php/) 
+ *
+ * @param [type] $n -> la taille du string voulue
+ * @return void
+ */
+function getName($n)
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $randomString = '';
+
+    for ($i = 0; $i < $n; $i++) {
+        $index = rand(0, strlen($characters) - 1);
+        $randomString .= $characters[$index];
+    }
+
+    return $randomString;
 }

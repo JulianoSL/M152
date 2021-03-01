@@ -17,13 +17,14 @@ $dir = "./assets/upload";
 $error_msg = "";
 if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
     for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
-        if (strpos($_FILES["upload"]["type"][$i], "image") !== false && tailleDossier($_FILES["upload"]["tmp_name"]) <= 70 * MB) {
+        if (strpos($_FILES["upload"]["type"][$i], "image") !== false && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
             if ($_FILES["upload"]["size"][$i] < 3 * MB) {
                 if ($_FILES["upload"]["error"][$i] == UPLOAD_ERR_OK) {
                     $tmp_name = $_FILES["upload"]["tmp_name"][$i];
-                    $name = basename($_FILES["upload"]["name"][$i]);
+                    $path_parts = pathinfo($_FILES["upload"]["name"][$i]);
+                    $name = getName(10) . "." . $path_parts['extension'];
                     move_uploaded_file($tmp_name, "$dir/$name");
-                    ajouterMedia($_FILES["upload"]["type"][$i], $_FILES["upload"]["name"][$i], 1);
+                    ajouterMedia($_FILES["upload"]["type"][$i], $name, 1);
                 }
             } else {
                 $error_msg = "Taille de fichier trop importante !";
@@ -55,7 +56,7 @@ if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
                 <div class="column col-sm-10 col-xs-11" id="main">
                     <?php include_once("navbar.php"); ?>
                     <form action="post.php" method="post" id="form" enctype="multipart/form-data">
-                        <textarea name="texte" placeholder="Write Something..."></textarea>
+                        <textarea name="texte" placeholder="Write Something..." required></textarea>
                         <div id="bottomPost">
                             <label for="input">📸</label>
                             <input type="file" name="upload[]" multiple accept="image/*" id="input">
