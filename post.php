@@ -15,7 +15,7 @@ $dir = "./assets/upload";
 $error_msg = "";
 if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
     $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
-    if ($commentaire) {        
+    if ($commentaire) {
         ajouterPost($commentaire, date("Y-m-d h:i:s"));
     }
     for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
@@ -24,10 +24,12 @@ if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
                 if ($_FILES["upload"]["error"][$i] == UPLOAD_ERR_OK) {
                     $tmp_name = $_FILES["upload"]["tmp_name"][$i];
                     $path_parts = pathinfo($_FILES["upload"]["name"][$i]);
-                    $name = getName(10) . "." . $path_parts['extension'];
-                    move_uploaded_file($tmp_name, "$dir/$name");
-                    $lastId = getLastPostId();
-                    ajouterMedia($_FILES["upload"]["type"][$i], $name, $lastId);
+                    $name = getName(20) . "." . $path_parts['extension'];
+                    if (move_uploaded_file($tmp_name, "$dir/$name")); //if true -> le fichier a bien été déplacé
+                    {
+                        $lastId = getLastPostId();
+                        ajouterMedia($_FILES["upload"]["type"][$i], $name, $lastId);
+                    }
                 }
             } else {
                 $error_msg = "Taille de fichier trop importante !";
