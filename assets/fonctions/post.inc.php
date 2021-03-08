@@ -5,7 +5,7 @@ Date     :  Février 2021
 Desc.    :  fonctions pour la page post
 Version  :  1.0
 */
-require "db.inc.php";
+require_once("db.inc.php");
 function ajouterPost($commentaire, $modificationDate)
 {
     static $ps = null;
@@ -94,11 +94,52 @@ function getName($n)
     return $randomString;
 }
 /**
- * retourne le dernier id inseré dans la table post 
+ * retourne le dernier id inseré dans la table post
  *
  * @return void
  */
 function getLastPostId()
 {
-    return dbData()->lastInsertId();
+    static $ps = null;
+    $sql = "SELECT idpost FROM post ORDER BY idpost DESC LIMIT 1";
+
+    $answer = false;
+    try {
+        if ($ps == null) {
+            $ps = dbData()->prepare($sql);
+        }
+        $ps->execute();
+
+        $answer = $ps->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        $answer = array();
+        echo $e->getMessage();
+    }
+    return $answer;
+}
+/**
+ * efface le dernier post inséré
+ *
+ * @param [type] $idPost
+ * @return void
+ */
+function effacerPost($idPost)
+{
+    static $ps = null;
+    $sql = "DELETE FROM post WHERE idPost = :ID_POST;";
+
+    $answer = false;
+    try {
+        if ($ps == null) {
+            $ps = dbData()->prepare($sql);
+        }
+        $ps->bindParam(':ID_POST', $idPost, PDO::PARAM_STR);
+        $ps->execute();
+
+        $answer = $ps->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        $answer = array();
+        echo $e->getMessage();
+    }
+    return $answer;
 }

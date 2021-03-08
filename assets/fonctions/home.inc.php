@@ -15,7 +15,7 @@ require "db.inc.php";
 function getAllPost()
 {
     static $ps = null;
-    $sql = "SELECT idPost FROM post";
+    $sql = "SELECT idPost FROM post ORDER BY idpost DESC";
 
     $answer = false;
     try {
@@ -106,9 +106,14 @@ function afficherPost($nbPost)
  */
 function postHtml($media, $commentaire)
 {
+
     echo '<div class="col-sm-5">';
     echo '<div class="panel panel-default">';
-    echo '<div class="panel-thumbnail"><img src="./assets/upload/' . $media[0]["nomMedia"] . '" class="img-responsive"></div>';
+    if ($media) {
+        foreach ($media as $key => $value) {
+            echo '<div class="panel-thumbnail"><img src="./assets/upload/' . $value["nomMedia"] . '" class="img-responsive"></div>';
+        }
+    }
     echo '<div class="panel-body">';
     echo '<p class="lead">' . $commentaire[0]["commentaire"] . '</p>';
     echo '</div></div></div>';

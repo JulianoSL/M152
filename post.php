@@ -3,39 +3,50 @@
 //  Description  :   Page Post, on peut ajouter un post contenant du texte et des fichiers multimédia
 //  Date         :   Janvier 2020
 //  Version      :   1.0
+include_once("./assets/fonctions/db.inc.php");
 include_once("./assets/fonctions/post.inc.php");
 
 define('KB', 1024);
 define('MB', 1048576);
 define('GB', 1073741824);
 define('TB', 1099511627776);
+try {
+    $dbh = dbData();
+    $dbh->beginTransaction();
+    $dir = "./assets/upload";
 
-$dir = "./assets/upload";
-
-$error_msg = "";
-if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
-    $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
-    if ($commentaire) {
-        ajouterPost($commentaire, date("Y-m-d h:i:s"));
-    }
-    for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
-        if (strpos($_FILES["upload"]["type"][$i], "image") !== false && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
-            if ($_FILES["upload"]["size"][$i] < 3 * MB) {
-                if ($_FILES["upload"]["error"][$i] == UPLOAD_ERR_OK) {
-                    $tmp_name = $_FILES["upload"]["tmp_name"][$i];
-                    $path_parts = pathinfo($_FILES["upload"]["name"][$i]);
-                    $name = getName(20) . "." . $path_parts['extension'];
-                    if (move_uploaded_file($tmp_name, "$dir/$name")); //if true -> le fichier a bien été déplacé
-                    {
-                        $lastId = getLastPostId();
-                        ajouterMedia($_FILES["upload"]["type"][$i], $name, $lastId);
+    $error_msg = "";
+    if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
+        $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
+        if ($commentaire) {
+            ajouterPost($commentaire, date("Y-m-d h:i:s"));
+        }
+        for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
+            if (strpos($_FILES["upload"]["type"][$i], "image") !== false && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
+                if ($_FILES["upload"]["size"][$i] < 3 * MB) {
+                    if ($_FILES["upload"]["error"][$i] == UPLOAD_ERR_OK) {
+                        $tmp_name = $_FILES["upload"]["tmp_name"][$i];
+                        $path_parts = pathinfo($_FILES["upload"]["name"][$i]);
+                        $name = getName(20) . "." . $path_parts['extension'];
+                        if (move_uploaded_file($tmp_name, "$dir/$name")) //if true -> le fichier a bien été déplacé
+                        {
+                            $lastId = getLastPostId();
+                            if (!ajouterMedia($_FILES["upload"]["type"][$i], $name, $lastId[0]["idpost"])) {
+                            } else {
+                                effacerPost($lastId[0]["idpost"]);
+                            }
+                        }
                     }
+                } else {
+                    $error_msg = "Taille de fichier trop importante !";
                 }
-            } else {
-                $error_msg = "Taille de fichier trop importante !";
             }
         }
     }
+    $dbh->commit();
+} catch (Exception $e) {
+    $dbh->rollBack();
+    die("Impossible de se connecter : " . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
