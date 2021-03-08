@@ -22,8 +22,8 @@ try {
             ajouterPost($commentaire, date("Y-m-d h:i:s"));
         }
         for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
-            if (strpos($_FILES["upload"]["type"][$i], "image") !== false && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
-                if ($_FILES["upload"]["size"][$i] < 3 * MB) {
+            if ((strpos($_FILES["upload"]["type"][$i], "image") || strpos($_FILES["upload"]["type"][$i], "video") !== false) !== false && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
+                if ($_FILES["upload"]["size"][$i] < 5 * MB) {
                     if ($_FILES["upload"]["error"][$i] == UPLOAD_ERR_OK) {
                         $tmp_name = $_FILES["upload"]["tmp_name"][$i];
                         $path_parts = pathinfo($_FILES["upload"]["name"][$i]);
@@ -75,7 +75,7 @@ try {
                         <textarea name="commentaire" placeholder="Write Something..." required></textarea>
                         <div id="bottomPost">
                             <label for="input">📸</label>
-                            <input type="file" name="upload[]" multiple accept="image/*" id="input">
+                            <input type="file" name="upload[]" multiple accept="image/*,video/*,audio/*" id="input">
                             <input type="submit" name="envoyer" value="envoyer" class="envoyer">
                         </div>
                         <p id="error"><?= $error_msg; ?></p>

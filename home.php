@@ -28,8 +28,7 @@ $posts = getAllPost();
         <div class="box">
             <div class="row row-offcanvas row-offcanvas-left">
                 <!-- main right col -->
-                <div class="column col-sm-10 col-xs-11" id="main">
-
+                <div class="column col-sm-10 col-xs-11" id="main">                
                     <?php include_once("navbar.php"); ?>
 
                     <div class="padding">

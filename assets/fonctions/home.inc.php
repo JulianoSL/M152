@@ -32,7 +32,7 @@ function getAllPost()
     return $answer;
 }
 /**
- * récupère l'image dans la table média en fonction de l'id post
+ * récupère le média et le type de média dans la table média en fonction de l'id post
  *
  * @param [int] $idPost
  * @return void
@@ -40,7 +40,7 @@ function getAllPost()
 function getMediaFromPost($idPost)
 {
     static $ps = null;
-    $sql = "SELECT nomMedia FROM Media JOIN post using(idPost) WHERE idPost=:IDPOST";
+    $sql = "SELECT nomMedia,typeMedia FROM Media JOIN post using(idPost) WHERE idPost=:IDPOST";
 
     $answer = false;
     try {
@@ -106,12 +106,17 @@ function afficherPost($nbPost)
  */
 function postHtml($media, $commentaire)
 {
-
     echo '<div class="col-sm-5">';
     echo '<div class="panel panel-default">';
     if ($media) {
-        foreach ($media as $key => $value) {
-            echo '<div class="panel-thumbnail"><img src="./assets/upload/' . $value["nomMedia"] . '" class="img-responsive"></div>';
+        if (strpos($media[0]["typeMedia"], "video") !== false) {
+            foreach ($media as $key => $value) {
+                echo '<video autoplay loop><source src="./assets/upload/' . $value["nomMedia"] . '" type="' . $value["typeMedia"] . '"></video>';
+            }
+        } else if (strpos($media[0]["typeMedia"], "image") !== false) {
+            foreach ($media as $key => $value) {
+                echo '<div class="panel-thumbnail"><img src="./assets/upload/' . $value["nomMedia"] . '" class="img-responsive"></div>';
+            }
         }
     }
     echo '<div class="panel-body">';
