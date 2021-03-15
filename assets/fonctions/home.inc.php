@@ -110,11 +110,10 @@ function postHtml($media, $commentaire)
     echo '<div class="panel panel-default">';
     if ($media) {
         foreach ($media as $key => $value) {
-            if (strpos($media[0]["typeMedia"], "video") !== false) {
+            if (strpos($value["typeMedia"], "video") !== false) {
                 echo '<video autoplay loop><source src="./assets/upload/' . $value["nomMedia"] . '" type="' . $value["typeMedia"] . '"></video>';
             }
-            if (strpos($media[0]["typeMedia"], "image") !== false) {
-
+            if (strpos($value["typeMedia"], "image") !== false) {
                 echo '<div class="panel-thumbnail"><img src="./assets/upload/' . $value["nomMedia"] . '" class="img-responsive"></div>';
             }
         }
