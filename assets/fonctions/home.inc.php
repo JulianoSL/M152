@@ -100,7 +100,7 @@ function afficherPost($nbPost)
 /**
  * affiche sous format html un post
  *
- * @param [image] $image -> le média du post
+ * @param [media] $media -> le média du post
  * @param [string] $commentaire -> le commentaire du post
  * @return void
  */
@@ -116,9 +116,39 @@ function postHtml($media, $commentaire)
             if (strpos($value["typeMedia"], "image") !== false) {
                 echo '<div class="panel-thumbnail"><img src="./assets/upload/' . $value["nomMedia"] . '" class="img-responsive"></div>';
             }
+            if (strpos($value["typeMedia"], "audio") !== false) {
+                echo '<audio controls><source src="./assets/upload/' . $value["nomMedia"] . '" type="' . $value["typeMedia"] . '"></audio>';
+            }
         }
     }
     echo '<div class="panel-body">';
     echo '<p class="lead">' . $commentaire[0]["commentaire"] . '</p>';
     echo '</div></div></div>';
+}
+
+/**
+ * cherche un média en fonction de son nom de fichier
+ *
+ * @param [media] $nomMedia
+ * @return void
+ */
+function chercherMedia($nomMedia)
+{
+    static $ps = null;
+    $sql = "SELECT idPost FROM Media WHERE nomMedia = :NOM_MEDIA";
+
+    $answer = false;
+    try {
+        if ($ps == null) {
+            $ps = dbData()->prepare($sql);
+        }
+        $ps->bindParam(':NOM_MEDIA', $nomMedia, PDO::PARAM_STR);
+        $ps->execute();
+
+        $answer = $ps->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        $answer = array();
+        echo $e->getMessage();
+    }
+    return $answer;
 }

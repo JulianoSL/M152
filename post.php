@@ -22,7 +22,7 @@ try {
             ajouterPost($commentaire, date("Y-m-d h:i:s"));
         }
         for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
-            if ((strpos($_FILES["upload"]["type"][$i], "image") !== false || strpos($_FILES["upload"]["type"][$i], "video") !== false)  && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
+            if ((strpos($_FILES["upload"]["type"][$i], "image") !== false || strpos($_FILES["upload"]["type"][$i], "video") !== false || strpos($_FILES["upload"]["type"][$i], "audio") !== false)  && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
                 if ($_FILES["upload"]["size"][$i] < 5 * MB) {
                     if ($_FILES["upload"]["error"][$i] == UPLOAD_ERR_OK) {
                         $tmp_name = $_FILES["upload"]["tmp_name"][$i];
@@ -36,6 +36,7 @@ try {
                                 header("Location:home.php");
                             } else {
                                 effacerPost($lastId[0]["idpost"]);
+                                unlink("$dir/$name");
                             }
                         }
                     }
@@ -47,7 +48,7 @@ try {
     }
     $dbh->commit();
 } catch (Exception $e) {
-    $dbh->rollBack();
+    $dbh->rollBack(); 
     die("Impossible de se connecter : " . $e->getMessage());
 }
 ?>

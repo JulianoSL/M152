@@ -5,7 +5,17 @@
 //  Version      :   1.0
 include_once("./assets/fonctions/home.inc.php");
 $posts = getAllPost();
+$dir = "./assets/upload";
 
+$dossier = scandir($dir);
+// vérifie que les fichiers dans le dossier upload sont bien dans la bd, sinon les supprime
+foreach ($dossier as $fichier) {
+    if (!chercherMedia($fichier)) {
+        if ($fichier !== "." && $fichier !== "..") {
+            unlink("$dir/$fichier");
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +38,7 @@ $posts = getAllPost();
         <div class="box">
             <div class="row row-offcanvas row-offcanvas-left">
                 <!-- main right col -->
-                <div class="column col-sm-10 col-xs-11" id="main">                
+                <div class="column col-sm-10 col-xs-11" id="main">
                     <?php include_once("navbar.php"); ?>
 
                     <div class="padding">
@@ -41,7 +51,7 @@ $posts = getAllPost();
                                 <?php
                                 afficherPost($posts);
                                 ?>
-                             
+
                             </div>
                             <!--/row-->
 
