@@ -109,12 +109,12 @@ function postHtml($media, $commentaire)
     echo '<div class="col-sm-5">';
     echo '<div class="panel panel-default">';
     if ($media) {
-        if (strpos($media[0]["typeMedia"], "video") !== false) {
-            foreach ($media as $key => $value) {
+        foreach ($media as $key => $value) {
+            if (strpos($media[0]["typeMedia"], "video") !== false) {
                 echo '<video autoplay loop><source src="./assets/upload/' . $value["nomMedia"] . '" type="' . $value["typeMedia"] . '"></video>';
             }
-        } else if (strpos($media[0]["typeMedia"], "image") !== false) {
-            foreach ($media as $key => $value) {
+            if (strpos($media[0]["typeMedia"], "image") !== false) {
+
                 echo '<div class="panel-thumbnail"><img src="./assets/upload/' . $value["nomMedia"] . '" class="img-responsive"></div>';
             }
         }
