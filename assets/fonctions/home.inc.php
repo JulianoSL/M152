@@ -92,7 +92,7 @@ function getCommentaireFromPost($idPost)
 function afficherPost($nbPost)
 {
     foreach ($nbPost as $key => $value) {
-        postHtml(getMediaFromPost($value["idPost"]), getCommentaireFromPost($value["idPost"]));
+        postHtml(getMediaFromPost($value["idPost"]), getCommentaireFromPost($value["idPost"]), $value["idPost"]);
     }
 }
 
@@ -104,7 +104,7 @@ function afficherPost($nbPost)
  * @param [string] $commentaire -> le commentaire du post
  * @return void
  */
-function postHtml($media, $commentaire)
+function postHtml($media, $commentaire, $idPost)
 {
     echo '<div class="col-sm-5">';
     echo '<div class="panel panel-default">';
@@ -122,7 +122,7 @@ function postHtml($media, $commentaire)
         }
     }
     echo '<div class="panel-body">';
-    echo '<p class="lead">' . $commentaire[0]["commentaire"] . '</p>';
+    echo '<p class="lead">' . $commentaire[0]["commentaire"] . '</p><a href="supprimer.php?idPost=' . $idPost . '">🚮</a>';
     echo '</div></div></div>';
 }
 

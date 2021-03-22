@@ -120,7 +120,7 @@ function getLastPostId()
 /**
  * efface le dernier post inséré
  *
- * @param [type] $idPost
+ * @param int $idPost
  * @return void
  */
 function effacerPost($idPost)
