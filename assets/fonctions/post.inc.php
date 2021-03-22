@@ -171,6 +171,12 @@ function modifierPost($idPost, $commentaire)
     }
     return $answer;
 }
+/**
+ * delete tout les médias en rapport avec l'idPost
+ *
+ * @param [type] $idPost
+ * @return void
+ */
 function deleteAllMediaWhereIdPost($idPost)
 {
     static $ps = null;
