@@ -1,11 +1,18 @@
 <?php
 //  Auteur       :   Souza Luz Juliano
-//  Description  :   Page Post, on peut ajouter un post contenant du texte et des fichiers multimédia
-//  Date         :   Janvier 2020
+//  Description  :   Page de suppression d'un post
+//  Date         :   Mars 2021
 //  Version      :   1.0
-include_once("./assets/fonctions/db.inc.php");
-include_once("./assets/fonctions/post.inc.php");
+include_once("./assets/fonctions/home.inc.php");
+require_once("./assets/fonctions/post.inc.php");
+$idPost = filter_input(INPUT_GET, "idPost", FILTER_SANITIZE_STRING);
+if ($idPost) {
 
+    $commentaire = getCommentaireFromPost($idPost)[0]["commentaire"];
+} else {
+    header("Location:home.php");
+    exit();
+}
 define('KB', 1024);
 define('MB', 1048576);
 define('GB', 1073741824);
@@ -16,40 +23,44 @@ try {
     $dir = "./assets/upload";
 
     $error_msg = "";
-    if (isset($_POST["envoyer"]) && isset($_POST["envoyer"]) != null) {
+    if (isset($_POST["Modifier"]) && isset($_POST["Modifier"]) != null) {
         $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
         if ($commentaire) {
-            ajouterPost($commentaire, date("Y-m-d h:i:s"));
+            modifierPost($idPost, $commentaire);
         }
-        for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
-            if ((strpos($_FILES["upload"]["type"][$i], "image") !== false || strpos($_FILES["upload"]["type"][$i], "video") !== false || strpos($_FILES["upload"]["type"][$i], "audio") !== false)  && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
-                if ($_FILES["upload"]["size"][$i] < 5 * MB) {
-                    if ($_FILES["upload"]["error"][$i] == UPLOAD_ERR_OK) {
-                        $tmp_name = $_FILES["upload"]["tmp_name"][$i];
-                        $path_parts = pathinfo($_FILES["upload"]["name"][$i]);
-                        $name = getName(20) . "." . $path_parts['extension'];
-                        if (move_uploaded_file($tmp_name, "$dir/$name")) //if true -> le fichier a bien été déplacé
-                        {
-                            $lastId = getLastPostId();
-                            if (!ajouterMedia($_FILES["upload"]["type"][$i], $name, $lastId[0]["idpost"])) {
-                                //si l'ajout a bien marché, redirection
-                                header("Location:home.php");
-                            } else {
-                                effacerPost($lastId[0]["idpost"]);
-                                unlink("$dir/$name");
+        //si le tableau de files est vide aucune modification de média n'est nécéssaire 
+        if ($_FILES["upload"]["name"][0] != null) {
+            deleteAllMediaWhereIdPost($idPost);
+            for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
+                if ((strpos($_FILES["upload"]["type"][$i], "image") !== false || strpos($_FILES["upload"]["type"][$i], "video") !== false || strpos($_FILES["upload"]["type"][$i], "audio") !== false)  && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
+                    if ($_FILES["upload"]["size"][$i] < 5 * MB) {
+                        if ($_FILES["upload"]["error"][$i] == UPLOAD_ERR_OK) {
+                            $tmp_name = $_FILES["upload"]["tmp_name"][$i];
+                            $path_parts = pathinfo($_FILES["upload"]["name"][$i]);
+                            $name = getName(20) . "." . $path_parts['extension'];
+                            if (move_uploaded_file($tmp_name, "$dir/$name")) //if true -> le fichier a bien été déplacé
+                            {
+                                if (!ajouterMedia($_FILES["upload"]["type"][$i], $name, $idPost)) {
+                                    //si l'ajout a bien marché, redirection
+                                    header("Location:home.php");
+                                } else {
+                                    effacerPost($idPost);
+                                    unlink("$dir/$name");
+                                }
                             }
                         }
+                    } else {
+                        $error_msg = "Taille de fichier trop importante !";
                     }
-                } else {
-                    $error_msg = "Taille de fichier trop importante !";
                 }
             }
+        } else {
+            header("Location:home.php");
         }
-        header("Location:home.php");
     }
     $dbh->commit();
 } catch (Exception $e) {
-    $dbh->rollBack(); 
+    $dbh->rollBack();
     die("Impossible de se connecter : " . $e->getMessage());
 }
 ?>
@@ -59,7 +70,7 @@ try {
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <title>Post Page</title>
+    <title>Modifier</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <!--[if lt IE 9]>
@@ -75,12 +86,14 @@ try {
                 <!-- main right col -->
                 <div class="column col-sm-10 col-xs-11" id="main">
                     <?php include_once("navbar.php"); ?>
-                    <form action="post.php" method="post" id="form" enctype="multipart/form-data">
-                        <textarea name="commentaire" placeholder="Write Something..." required></textarea>
+                    <br>
+                    <br>
+                    <form action="" method="post" id="form" enctype="multipart/form-data">
+                        <textarea name="commentaire" placeholder="Write Something..." required><?= $commentaire; ?></textarea>
                         <div id="bottomPost">
                             <label for="input">📸</label>
                             <input type="file" name="upload[]" multiple accept="image/*,video/*,audio/*" id="input">
-                            <input type="submit" name="envoyer" value="envoyer" class="envoyer">
+                            <input type="submit" name="Modifier" value="Modifier" class="envoyer">
                         </div>
                         <p id="error"><?= $error_msg; ?></p>
                     </form>

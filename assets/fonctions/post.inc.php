@@ -143,3 +143,50 @@ function effacerPost($idPost)
     }
     return $answer;
 }
+/**
+ * modifier le post en fonction de son id
+ *
+ * @param [type] $idPost
+ * @param [type] $commentaire
+ * @return void
+ */
+function modifierPost($idPost, $commentaire)
+{
+    static $ps = null;
+    $sql = "UPDATE post SET commentaire = :COMMENTAIRE WHERE idPost = :ID_POST";
+
+    $answer = false;
+    try {
+        if ($ps == null) {
+            $ps = dbData()->prepare($sql);
+        }
+        $ps->bindParam(':ID_POST', $idPost, PDO::PARAM_STR);
+        $ps->bindParam(':COMMENTAIRE', $commentaire, PDO::PARAM_STR);
+        $ps->execute();
+
+        $answer = $ps->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        $answer = array();
+        echo $e->getMessage();
+    }
+    return $answer;
+}
+function deleteAllMediaWhereIdPost($idPost)
+{
+    static $ps = null;
+    $sql = "DELETE FROM Media WHERE idPost = :ID_POST";
+
+    $answer = false;
+    try {
+        if ($ps == null) {
+            $ps = dbData()->prepare($sql);
+        }
+        $ps->bindParam(':ID_POST', $idPost, PDO::PARAM_STR);    
+
+        $answer = $ps->execute();
+    } catch (Exception $e) {
+        $answer = array();
+        echo $e->getMessage();
+    }
+    return $answer;
+}

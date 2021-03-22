@@ -122,7 +122,7 @@ function postHtml($media, $commentaire, $idPost)
         }
     }
     echo '<div class="panel-body">';
-    echo '<p class="lead">' . $commentaire[0]["commentaire"] . '</p><a href="supprimer.php?idPost=' . $idPost . '">🚮</a>';
+    echo '<p class="lead">' . $commentaire[0]["commentaire"] . '</p><a href="supprimer.php?idPost=' . $idPost . '">supprimer 🚮</a><a href="modifier.php?idPost=' . $idPost . '">modifier 🖋</a>';
     echo '</div></div></div>';
 }
 

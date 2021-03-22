@@ -6,13 +6,17 @@
 include_once("./assets/fonctions/home.inc.php");
 require_once("./assets/fonctions/post.inc.php");
 $idPost = filter_input(INPUT_GET, "idPost", FILTER_SANITIZE_STRING);
+if (!$idPost) {
+    header("Location:home.php");
+    exit();
+}
 if ($_POST["Supprimer"] && $idPost) {
-    effacerPost($idPost);  
+    effacerPost($idPost);
     //ici pas besoin d'effacer les médias puisque dans tout les cas une vérification est effectuée sur la page home (ligne 12 de la page home)
     header("Location:home.php");
 }
 if ($_POST["Annuler"]) {
-   header("Location:home.php");
+    header("Location:home.php");
 }
 ?>
 <!DOCTYPE html>
@@ -21,7 +25,7 @@ if ($_POST["Annuler"]) {
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <title>Post Page</title>
+    <title>Supprimer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <!--[if lt IE 9]>
