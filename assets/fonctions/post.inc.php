@@ -187,9 +187,63 @@ function deleteAllMediaWhereIdPost($idPost)
         if ($ps == null) {
             $ps = dbData()->prepare($sql);
         }
-        $ps->bindParam(':ID_POST', $idPost, PDO::PARAM_STR);    
+        $ps->bindParam(':ID_POST', $idPost, PDO::PARAM_STR);
 
         $answer = $ps->execute();
+    } catch (Exception $e) {
+        $answer = array();
+        echo $e->getMessage();
+    }
+    return $answer;
+}
+/**
+ * modifie un média
+ *
+ * @param int $idMedia
+ * @param string $typeMedia
+ * @param string $nomMedia
+ * @return void
+ */
+function modifierMedia($idMedia, $typeMedia, $nomMedia)
+{
+    static $ps = null;
+    $sql = "UPDATE Media SET typeMedia = :TYPE_MEDIA , nomMedia = :NOM_MEDIA WHERE idMedia = :ID_MEDIA";
+
+    $answer = false;
+    try {
+        if ($ps == null) {
+            $ps = dbData()->prepare($sql);
+        }
+        $ps->bindParam(':ID_MEDIA', $idMedia, PDO::PARAM_INT);
+        $ps->bindParam(':TYPE_MEDIA', $typeMedia, PDO::PARAM_STR);
+        $ps->bindParam(':NOM_MEDIA', $nomMedia, PDO::PARAM_STR);
+
+        $answer = $ps->execute();
+    } catch (Exception $e) {
+        $answer = array();
+        echo $e->getMessage();
+    }
+    return $answer;
+}
+/**
+ * récupère le 1er média 
+ *
+ * @return void
+ */
+function getFirstMediaWhereIdPost()
+{
+    static $ps = null;
+    $sql = "SELECT idMedia FROM Media WHERE idPost = :ID_POST  ORDER BY idMedia ASC LIMIT 1";
+
+    $answer = false;
+    try {
+        if ($ps == null) {
+            $ps = dbData()->prepare($sql);
+        }
+        $ps->bindParam(':ID_POST', $idPost, PDO::PARAM_INT);
+        $ps->execute();
+
+        $answer = $ps->fetchAll(PDO::FETCH_ASSOC);
     } catch (Exception $e) {
         $answer = array();
         echo $e->getMessage();
