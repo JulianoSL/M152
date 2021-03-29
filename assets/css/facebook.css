@@ -298,7 +298,6 @@ small.text-muted {
   margin-top: 10%;
   width: 100vw;
   height: 30vh;
-  text-align: center;
 }
 
 #input {
@@ -328,4 +327,9 @@ label {
 
 .float-right {
   float: right;
+  margin-right: 20vw;
+}
+
+.float-left {
+  float: left;  
 }

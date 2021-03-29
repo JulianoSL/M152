@@ -5,11 +5,12 @@
 //  Version      :   1.0
 include_once("./assets/fonctions/home.inc.php");
 require_once("./assets/fonctions/post.inc.php");
+// récupère la valeur id post en get
 $idPost = filter_input(INPUT_GET, "idPost", FILTER_SANITIZE_STRING);
 if ($idPost) {
-
     $commentaire = getCommentaireFromPost($idPost)[0]["commentaire"];
 } else {
+    // si idPost ne contient rien, on redirige sur home (cela évite l'accès par url en dure) 
     header("Location:home.php");
     exit();
 }
@@ -17,20 +18,29 @@ define('KB', 1024);
 define('MB', 1048576);
 define('GB', 1073741824);
 define('TB', 1099511627776);
+$dir = "./assets/upload";
+$error_msg = "";
+
 try {
     $dbh = dbData();
     $dbh->beginTransaction();
-    $dir = "./assets/upload";
 
-    $error_msg = "";
     if (isset($_POST["Modifier"]) && isset($_POST["Modifier"]) != null) {
         $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
+        //modification du commentaire
         if ($commentaire) {
             modifierPost($idPost, $commentaire);
         }
+        // vérification des éléments check 
+        $checkbox = filter_input(INPUT_POST, "checkbox", FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
+        if ($checkbox) {
+            foreach ($checkbox as $key => $value) {
+                deleteMediaFromName($value);
+            }
+        }
         //si le tableau de files est vide aucune modification de média n'est nécéssaire 
         if ($_FILES["upload"]["name"][0] != null) {
-            deleteAllMediaWhereIdPost($idPost);
+
             for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
                 if ((strpos($_FILES["upload"]["type"][$i], "image") !== false || strpos($_FILES["upload"]["type"][$i], "video") !== false || strpos($_FILES["upload"]["type"][$i], "audio") !== false)  && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
                     if ($_FILES["upload"]["size"][$i] < 5 * MB) {
@@ -56,7 +66,7 @@ try {
             }
         } else {
             header("Location:home.php");
-        }
+        }     
     }
     $dbh->commit();
 } catch (Exception $e) {
@@ -88,14 +98,21 @@ try {
                     <?php include_once("navbar.php"); ?>
                     <br>
                     <br>
+                    <br>
                     <form action="" method="post" id="form" enctype="multipart/form-data">
-                        <textarea name="commentaire" placeholder="Write Something..." required><?= $commentaire; ?></textarea>
-                        <div id="bottomPost">
-                            <label for="input">📸</label>
-                            <input type="file" name="upload[]" multiple accept="image/*,video/*,audio/*" id="input">
-                            <input type="submit" name="Modifier" value="Modifier" class="envoyer">
+                        <div>
+                            <h2>Cochez le média pour l'effacer du post</h2>
+                            <?= afficherMediasCheckbox(getMedias($idPost)); ?>
                         </div>
-                        <p id="error"><?= $error_msg; ?></p>
+                        <div class="float-right">
+                            <textarea name="commentaire" placeholder="Write Something..." required><?= $commentaire; ?></textarea>
+                            <div id="bottomPost">
+                                <label for="input">📸</label>
+                                <input type="file" name="upload[]" multiple accept="image/*,video/*,audio/*" id="input">
+                                <input type="submit" name="Modifier" value="Modifier" class="envoyer">
+                            </div>
+                            <p id="error"><?= $error_msg; ?></p>
+                        </div>
                     </form>
                 </div>
                 <!-- /main -->

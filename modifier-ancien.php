@@ -5,12 +5,11 @@
 //  Version      :   1.0
 include_once("./assets/fonctions/home.inc.php");
 require_once("./assets/fonctions/post.inc.php");
-// récupère la valeur id post en get
 $idPost = filter_input(INPUT_GET, "idPost", FILTER_SANITIZE_STRING);
 if ($idPost) {
+
     $commentaire = getCommentaireFromPost($idPost)[0]["commentaire"];
 } else {
-    // si idPost ne contient rien, on redirige sur home (cela évite l'accès par url en dure) 
     header("Location:home.php");
     exit();
 }
@@ -18,22 +17,20 @@ define('KB', 1024);
 define('MB', 1048576);
 define('GB', 1073741824);
 define('TB', 1099511627776);
-$dir = "./assets/upload";
-$error_msg = "";
-
 try {
     $dbh = dbData();
     $dbh->beginTransaction();
+    $dir = "./assets/upload";
 
+    $error_msg = "";
     if (isset($_POST["Modifier"]) && isset($_POST["Modifier"]) != null) {
         $commentaire = filter_input(INPUT_POST, "commentaire", FILTER_SANITIZE_STRING);
-        //modification du commentaire
         if ($commentaire) {
             modifierPost($idPost, $commentaire);
         }
         //si le tableau de files est vide aucune modification de média n'est nécéssaire 
         if ($_FILES["upload"]["name"][0] != null) {
-
+            deleteAllMediaWhereIdPost($idPost);
             for ($i = 0; $i < count($_FILES["upload"]["name"]); $i++) {
                 if ((strpos($_FILES["upload"]["type"][$i], "image") !== false || strpos($_FILES["upload"]["type"][$i], "video") !== false || strpos($_FILES["upload"]["type"][$i], "audio") !== false)  && tailleUpload($_FILES["upload"]["size"]) <= 70 * MB) {
                     if ($_FILES["upload"]["size"][$i] < 5 * MB) {
@@ -43,8 +40,13 @@ try {
                             $name = getName(20) . "." . $path_parts['extension'];
                             if (move_uploaded_file($tmp_name, "$dir/$name")) //if true -> le fichier a bien été déplacé
                             {
-                                // tentative pour ne pas effacer tout les fichiers a chaque fois (marche pas) 
-                                modifierMedia(getFirstMediaWhereIdPost(), $_FILES["upload"]["type"][$i], $name);
+                                if (!ajouterMedia($_FILES["upload"]["type"][$i], $name, $idPost)) {
+                                    //si l'ajout a bien marché, redirection
+                                    header("Location:home.php");
+                                } else {
+                                    effacerPost($idPost);
+                                    unlink("$dir/$name");
+                                }
                             }
                         }
                     } else {

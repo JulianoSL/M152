@@ -250,3 +250,70 @@ function getFirstMediaWhereIdPost()
     }
     return $answer;
 }
+
+function afficherMediasCheckbox($medias)
+{
+    foreach ($medias as $key => $value) {
+        if (strpos($value["typeMedia"], "video") !== false) {
+            echo '<label for="id' . $value["nomMedia"] . '"><video autoplay loop><source src="./assets/upload/' . $value["nomMedia"] . '" type="' . $value["typeMedia"] . '"></video></label><input type="checkbox" id="id' . $value["nomMedia"] . '" name=checkbox[] value="' . $value["nomMedia"] . '">';
+        }
+        if (strpos($value["typeMedia"], "image") !== false) {
+            echo '<label for="id' . $value["nomMedia"] . '"><img src="./assets/upload/' . $value["nomMedia"] . '" class="img-responsive"></label><input type="checkbox" id="id' . $value["nomMedia"] . '" name=checkbox[] value="' . $value["nomMedia"] . '">';
+        }
+        if (strpos($value["typeMedia"], "audio") !== false) {
+            echo '<label for="id' . $value["nomMedia"] . '"><audio controls><source src="./assets/upload/' . $value["nomMedia"] . '" type="' . $value["typeMedia"] . '"></audio></label><input type="checkbox" id="id' . $value["nomMedia"] . '" name=checkbox[] value="' . $value["nomMedia"] . '">';
+        }
+        echo "<br>";
+    }
+}
+/**
+ * chercher tout les médias en fonction de l'idPost
+ *
+ * @param int $idPost
+ * @return void
+ */
+function getMedias($idPost)
+{
+    static $ps = null;
+    $sql = "SELECT * FROM Media WHERE idPost = :ID_POST";
+
+    $answer = false;
+    try {
+        if ($ps == null) {
+            $ps = dbData()->prepare($sql);
+        }
+        $ps->bindParam(':ID_POST', $idPost, PDO::PARAM_INT);
+        $ps->execute();
+
+        $answer = $ps->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        $answer = array();
+        echo $e->getMessage();
+    }
+    return $answer;
+}
+/**
+ * efface un média en fonction de son nom
+ *
+ * @param string $nomMedia
+ * @return void
+ */
+function deleteMediaFromName($nomMedia)
+{
+    static $ps = null;
+    $sql = "DELETE FROM Media WHERE nomMedia= :NOM_MEDIA";
+
+    $answer = false;
+    try {
+        if ($ps == null) {
+            $ps = dbData()->prepare($sql);
+        }
+        $ps->bindParam(':NOM_MEDIA', $nomMedia, PDO::PARAM_STR);
+
+        $answer = $ps->execute();
+    } catch (Exception $e) {
+        $answer = array();
+        echo $e->getMessage();
+    }
+    return $answer;
+}
